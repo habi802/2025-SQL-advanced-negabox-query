@@ -25,6 +25,8 @@ BEGIN
     DECLARE value_screen_price INT;
     DECLARE value_adjust_price INT DEFAULT 0;
     DECLARE value_index INT DEFAULT 0;
+    DECLARE value_seat_id BIGINT;
+    DECLARE value_reservation_seat_ids JSON;
 
     -- 트랜잭션 시작: 프로시저 실행 중 실패하면 프로시저 실행 전으로 롤백함
     START TRANSACTION;
@@ -78,10 +80,13 @@ BEGIN
 
     -- 1. 예매 좌석 테이블 INSERT
     SET value_index = 0;
+    SET value_reservation_seat_ids = JSON_ARRAY();
     WHILE value_index < value_seat_count DO
+        SET value_seat_id = JSON_UNQUOTE(JSON_EXTRACT(input_seat_id, CONCAT('$[', value_index, ']')));
         INSERT INTO reservation_seat
         SET schedule_id = input_schedule_id,
-            seat_id = JSON_UNQUOTE(JSON_EXTRACT(input_seat_id, CONCAT('$[', value_index, ']')));
+            seat_id = value_seat_id;
+        SET value_reservation_seat_ids = JSON_ARRAY_APPEND(value_reservation_seat_ids, '$', LAST_INSERT_ID());
         SET value_index = value_index + 1;
     END WHILE;
 
@@ -99,12 +104,12 @@ BEGIN
     WHILE value_index < value_seat_count DO
         INSERT INTO reservation_seat_list
         SET reservation_id = value_reservation_id,
-            reservation_seat_id = JSON_UNQUOTE(JSON_EXTRACT(input_seat_id, CONCAT('$[', value_index, ']')));
+            reservation_seat_id = JSON_UNQUOTE(JSON_EXTRACT(value_reservation_seat_ids, CONCAT('$[', value_index, ']')));
         SET value_index = value_index + 1;
     END WHILE;
 
     -- 4. 예매 인원 테이블 INSERT
-    -- 상영관 분류, 상영 시간 분류에 따른 가격을 먼저 계산
+    -- 4.1. 상영관 분류, 상영 시간 분류에 따른 가격을 먼저 계산
     SELECT st.price INTO value_price
     FROM screen_schedule ss
     JOIN screen s
@@ -124,7 +129,7 @@ BEGIN
     SET value_price = value_price - value_adjust_price;
     SET value_screen_price = value_price;
 
-    -- 연령 분류, 인원 수에 따른 가격 계산
+    -- 4.2. 연령 분류, 인원 수에 따른 가격 계산
     SET value_index = 0;
     WHILE value_index < value_reservation_person_length DO
         SET value_age_type = JSON_UNQUOTE(JSON_EXTRACT(input_reservation_person, CONCAT('$[', value_index, '].age_type')));
@@ -161,10 +166,10 @@ DELIMITER ;
 
 -- 프로시저 호출 예시
 CALL insert_reservation(
-    2134366,
+    2634128,
     1,
     NULL,
-    '[72283, 2, 3]',
+    '[68219, 68220, 68221]',
     '[{"age_type": "00201", "count": 2}, {"age_type": "00202", "count": 1}]'
 );
 

@@ -1,0 +1,1 @@
+ALTER TABLE screen_schedule AUTO_INCREMENT = 3097673;

@@ -1,5 +1,7 @@
 DELIMITER $$
 
+DROP PROCEDURE IF EXISTS insert_reservation;
+
 -- 예매 좌석, 예매, 예매별 예매 좌석, 예매 인원 테이블 순으로 INSERT하는 프로시저
 CREATE PROCEDURE insert_reservation(
     IN input_schedule_id BIGINT, -- 1
@@ -11,13 +13,15 @@ CREATE PROCEDURE insert_reservation(
 BEGIN
     DECLARE value_seat_count INT;
     DECLARE value_reservation_id BIGINT;
-    DECLARE value_reservation_person_count INT;
+    DECLARE value_reservation_person_length INT;
+    DECLARE value_reservation_person_count INT DEFAULT 0;
     DECLARE now_date_time DATETIME;
     DECLARE screen_running_date DATE;
     DECLARE screen_start_time TIME;
     DECLARE value_age_type VARCHAR(7);
     DECLARE value_count INT;
     DECLARE value_price INT;
+    DECLARE value_total_price INT DEFAULT 0;
     DECLARE value_screen_price INT;
     DECLARE value_adjust_price INT DEFAULT 0;
     DECLARE value_index INT DEFAULT 0;
@@ -25,17 +29,25 @@ BEGIN
     -- 트랜잭션 시작: 프로시저 실행 중 실패하면 프로시저 실행 전으로 롤백함
     START TRANSACTION;
 
+    -- 회원 ID와 비회원 ID 중 하나만 입력되었는지 확인
     if (input_user_id IS NOT NULL AND input_non_user_id IS NOT NULL) OR
        (input_user_id IS NULL AND input_non_user_id IS NULL) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '회원 ID와 비회원 ID 중 반드시 하나는 입력되어야 합니다.';
     END if;
 
+    -- 예매 좌석 수와 인원 수가 맞는지 확인
+    SET value_reservation_person_length = JSON_LENGTH(input_reservation_person);
+    WHILE value_index < value_reservation_person_length DO
+        SET value_reservation_person_count = value_reservation_person_count + JSON_UNQUOTE(JSON_EXTRACT(input_reservation_person, CONCAT('$[', value_index, '].count')));
+        SET value_index = value_index + 1;
+    END WHILE;
+
     SET value_seat_count = JSON_LENGTH(input_seat_id);
-    SET value_reservation_person_count = JSON_LENGTH(input_reservation_person);
     if value_seat_count != value_reservation_person_count THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '예매 좌석 수와 인원 수가 맞지 않습니다.';
     END if;
 
+    -- 현재 날짜가 상영일보다 늦거나 상영 시작 시간 20분 전에는 예매할 수 없음
     SET now_date_time = NOW();
 
     SELECT running_date, TIMESTAMP(running_date, start_time) INTO screen_running_date, screen_start_time
@@ -44,11 +56,28 @@ BEGIN
 
     if DATE(now_date_time) > screen_running_date THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '이미 상영이 종료된 일정은 예매를 등록할 수 없습니다.';
-    elseif now_date_time > screen_start_time THEN
+    elseif now_date_time > screen_start_time - INTERVAL 20 MINUTE THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '상영 시작 20분 전부터는 예매를 등록할 수 없습니다.';
     END if;
 
+    -- 입력한 좌석 ID와 상영관 좌석 ID가 맞는지 확인
+    SET value_index = 0;
+    WHILE value_index < value_seat_count DO
+        if NOT EXISTS(
+            SELECT 1
+            FROM screen_schedule ss
+            JOIN seat se
+              ON se.screen_id = ss.screen_id
+            WHERE ss.schedule_id = input_schedule_id
+              AND se.seat_id = JSON_EXTRACT(input_seat_id, CONCAT('$[', value_index, ']'))
+        ) THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '입력한 좌석 ID와 상영관 좌석 ID가 맞지 않습니다.';
+        END if;
+        SET value_index = value_index + 1;
+    END WHILE;
+
     -- 1. 예매 좌석 테이블 INSERT
+    SET value_index = 0;
     WHILE value_index < value_seat_count DO
         INSERT INTO reservation_seat
         SET schedule_id = input_schedule_id,
@@ -95,12 +124,12 @@ BEGIN
     SET value_price = value_price - value_adjust_price;
     SET value_screen_price = value_price;
 
+    -- 연령 분류, 인원 수에 따른 가격 계산
     SET value_index = 0;
-    WHILE value_index < value_reservation_person_count DO
+    WHILE value_index < value_reservation_person_length DO
         SET value_age_type = JSON_UNQUOTE(JSON_EXTRACT(input_reservation_person, CONCAT('$[', value_index, '].age_type')));
         SET value_count = JSON_UNQUOTE(JSON_EXTRACT(input_reservation_person, CONCAT('$[', value_index, '].count')));
 
-        -- 연령 분류, 인원 수에 따른 가격 계산
         SET value_price = value_screen_price;
 
         SELECT adjust_price INTO value_adjust_price
@@ -116,18 +145,27 @@ BEGIN
             count = value_count,
             price = value_price;
         SET value_index = value_index + 1;
+
+        SET value_total_price = value_total_price + value_price;
     END WHILE;
+
+    -- 5. 최종 합산 가격으로 예매 테이블 UPDATE
+    UPDATE reservation
+    SET price = value_total_price
+    WHERE reservation_id = value_reservation_id;
+
+    COMMIT;
 END$$
 
 DELIMITER ;
 
 -- 프로시저 호출 예시
 CALL insert_reservation(
-    1,
+    2134366,
     1,
     NULL,
-    '[1]',
-    '[{"age_type": "00201", "count": 2}]'
+    '[72283, 2, 3]',
+    '[{"age_type": "00201", "count": 2}, {"age_type": "00202", "count": 1}]'
 );
 
 

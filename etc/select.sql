@@ -27,7 +27,6 @@ WHERE running_date = '2025-11-27'
   AND start_time > '20:00:00'
 ORDER BY start_time;
 
-
 SELECT se.*
 FROM screen_schedule ss
 JOIN seat se

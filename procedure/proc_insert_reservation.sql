@@ -2,7 +2,6 @@ DELIMITER $$
 
 DROP PROCEDURE IF EXISTS insert_reservation;
 
--- 예매 좌석, 예매, 예매별 예매 좌석, 예매 인원 테이블 순으로 INSERT하는 프로시저
 CREATE PROCEDURE insert_reservation(
     IN input_schedule_id BIGINT, -- 1
     IN input_user_id BIGINT, -- 1 or NULL
@@ -11,13 +10,14 @@ CREATE PROCEDURE insert_reservation(
     IN input_reservation_person JSON -- '[{"age_type": "00201", "count": 2}]'
 )
 BEGIN
+    -- 예매 좌석, 예매, 예매별 예매 좌석, 예매 인원 테이블 순으로 INSERT하는 프로시저
     DECLARE value_seat_count INT;
     DECLARE value_reservation_id BIGINT;
     DECLARE value_reservation_person_length INT;
     DECLARE value_reservation_person_count INT DEFAULT 0;
-    DECLARE now_date_time DATETIME;
-    DECLARE screen_running_date DATE;
-    DECLARE screen_start_time TIME;
+    DECLARE value_now_date_time DATETIME;
+    DECLARE value_screen_running_date DATE;
+    DECLARE value_screen_start_time TIME;
     DECLARE value_age_type VARCHAR(7);
     DECLARE value_count INT;
     DECLARE value_price INT;
@@ -50,15 +50,15 @@ BEGIN
     END if;
 
     -- 현재 날짜가 상영일보다 늦거나 상영 시작 시간 20분 전에는 예매할 수 없음
-    SET now_date_time = NOW();
+    SET value_now_date_time = NOW();
 
-    SELECT running_date, TIMESTAMP(running_date, start_time) INTO screen_running_date, screen_start_time
+    SELECT running_date, TIMESTAMP(running_date, start_time) INTO value_screen_running_date, value_screen_start_time
     FROM screen_schedule
     WHERE schedule_id = input_schedule_id;
 
-    if DATE(now_date_time) > screen_running_date THEN
+    if DATE(value_now_date_time) > value_screen_running_date THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '이미 상영이 종료된 일정은 예매를 등록할 수 없습니다.';
-    elseif now_date_time > screen_start_time - INTERVAL 20 MINUTE THEN
+    elseif value_now_date_time > value_screen_start_time - INTERVAL 20 MINUTE THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '상영 시작 20분 전부터는 예매를 등록할 수 없습니다.';
     END if;
 

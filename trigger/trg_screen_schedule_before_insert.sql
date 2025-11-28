@@ -6,6 +6,7 @@ CREATE TRIGGER trg_screen_schedule_before_insert
     BEFORE INSERT ON screen_schedule
     FOR EACH ROW
 BEGIN
+    -- 상영 일정 등록 전에 입력한 값에 대한 검증을 하고, 필요한 컬럼 값을 얻는 트리거
     /*
     상영 일정 등록 시 입력 받는 컬럼
     상영관 ID - screen_id = 1

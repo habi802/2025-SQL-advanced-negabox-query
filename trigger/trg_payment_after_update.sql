@@ -6,7 +6,7 @@ CREATE TRIGGER trg_payment_after_update
     AFTER UPDATE ON payment
     FOR EACH ROW
 BEGIN
-    -- 결제 상태로 '취소' 나 '환불' 로 변경되었다면
+    -- 결제 상태가 '취소' 나 '환불' 로 변경되었을 경우
     if ((OLD.status <> 2 AND NEW.status = 2)
         OR (OLD.status <> 3 AND NEW.status = 3)) THEN
         -- 예매의 상태를 '취소' 로 변경

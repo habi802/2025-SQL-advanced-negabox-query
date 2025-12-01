@@ -9,5 +9,6 @@
     <file url="file://$PROJECT_DIR$/trigger/trg_reservation_after_update.sql" value="0fe66180-36bf-450f-8362-f9ef8fa9e100" />
     <file url="file://$PROJECT_DIR$/trigger/trg_reservation_seat_list_after_delete.sql" value="0fe66180-36bf-450f-8362-f9ef8fa9e100" />
     <file url="file://$PROJECT_DIR$/trigger/trg_screen_schedule_before_insert.sql" value="0fe66180-36bf-450f-8362-f9ef8fa9e100" />
+    <file url="file://$PROJECT_DIR$/trigger/trg_ticket_discount_after_delete.sql" value="0fe66180-36bf-450f-8362-f9ef8fa9e100" />
   </component>
 </project>

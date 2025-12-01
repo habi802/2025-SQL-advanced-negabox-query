@@ -161,7 +161,9 @@ BEGIN
 
     -- 6. 결제 테이블 INSERT
     INSERT INTO payment
-    SET origin_amount = value_total_price,
+    SET payment_type = 0,
+        type_id = value_reservation_id,
+        origin_amount = value_total_price,
         amount = value_total_price;
 
     COMMIT;

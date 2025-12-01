@@ -1,4 +1,21 @@
 -- 테스트를 위해 온갖 잡다한 거 다 적어놓음
+SET GLOBAL event_scheduler = ON;
+
+ALTER TABLE screen_schedule AUTO_INCREMENT = 3097673;
+
+SET FOREIGN_KEY_CHECKS = 0;
+SET FOREIGN_KEY_CHECKS = 1;
+
+SELECT @@SESSION.FOREIGN_KEY_CHECKS;
+
+INSERT INTO screen_schedule
+        SET screen_id = 1,
+            movie_id = 1,
+            employee_id = 3,
+            running_date = '2025-12-31',
+            start_time = '15:00:00',
+            end_time = '18:00:00';
+
 EXPLAIN
 SELECT * FROM user;
 

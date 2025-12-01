@@ -159,6 +159,11 @@ BEGIN
     SET price = value_total_price
     WHERE reservation_id = value_reservation_id;
 
+    -- 6. 결제 테이블 INSERT
+    INSERT INTO payment
+    SET origin_amount = value_total_price,
+        amount = value_total_price;
+
     COMMIT;
 END$$
 

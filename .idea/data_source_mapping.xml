@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
-    <file url="file://$PROJECT_DIR$/etc/insert_screen_schedule.sql" value="0fe66180-36bf-450f-8362-f9ef8fa9e100" />
     <file url="file://$PROJECT_DIR$/etc/select.sql" value="0fe66180-36bf-450f-8362-f9ef8fa9e100" />
-    <file url="file://$PROJECT_DIR$/etc/set_auto_increment.sql" value="7377f3d5-8d79-4f35-b168-5e151ed4d854" />
-    <file url="file://$PROJECT_DIR$/etc/set_foreign_key_checks.sql" value="7377f3d5-8d79-4f35-b168-5e151ed4d854" />
     <file url="file://$PROJECT_DIR$/procedure/proc_insert_reservation.sql" value="0fe66180-36bf-450f-8362-f9ef8fa9e100" />
+    <file url="file://$PROJECT_DIR$/scheduler/evt_cancel_payment.sql" value="0fe66180-36bf-450f-8362-f9ef8fa9e100" />
     <file url="file://$PROJECT_DIR$/trigger/trg_screen_schedule_before_insert.sql" value="0fe66180-36bf-450f-8362-f9ef8fa9e100" />
   </component>
 </project>

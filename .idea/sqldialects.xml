@@ -4,6 +4,7 @@
     <file url="file://$PROJECT_DIR$/etc/select.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/procedure/proc_insert_reservation.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/scheduler/evt_cancel_payment.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/trigger/trg_order_after_update.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/trigger/trg_payment_after_update.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/trigger/trg_reservation_after_update.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/trigger/trg_screen_schedule_before_insert.sql" dialect="MySQL" />

@@ -3,7 +3,7 @@ DELIMITER $$
 DROP TRIGGER IF EXISTS trg_ticket_discount_after_delete;
 
 CREATE TRIGGER trg_ticket_discount_after_delete
-    AFTER UPDATE ON ticket_discount
+    AFTER DELETE ON ticket_discount
     FOR EACH ROW
 BEGIN
     if OLD.benefit_code = '01101' THEN

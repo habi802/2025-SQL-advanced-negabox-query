@@ -3,7 +3,7 @@ DELIMITER $$
 DROP TRIGGER IF EXISTS trg_reservation_seat_list_after_delete;
 
 CREATE TRIGGER trg_reservation_seat_list_after_delete
-    AFTER UPDATE ON reservation_seat_list
+    AFTER DELETE ON reservation_seat_list
     FOR EACH ROW
 BEGIN
     -- 삭제한 예매 ID를 가진 예매별 예매 좌석 데이터 삭제

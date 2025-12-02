@@ -14,7 +14,7 @@ DO BEGIN
     UPDATE `order`
     SET status = 2
     WHERE status = 0
-    AND created_at <= NOW() - INTERVAL 5 MINUTE;
+    AND created_at <= NOW() - INTERVAL 30 MINUTE;
 END$$
 
 DELIMITER ;

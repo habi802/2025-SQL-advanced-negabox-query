@@ -16,6 +16,10 @@ BEGIN
         -- 예매별 예매 좌석 데이터 삭제
         DELETE FROM reservation_seat_list
         WHERE reservation_id = OLD.reservation_id;
+    -- 예매 상태가 '완료' 로 변경되었을 경우
+    elseif OLD.status <> 1 AND NEW.status = 1 THEN
+        -- 결제 데이터 상태도 '완료' 로 변경
+
     END if;
 END$$
 

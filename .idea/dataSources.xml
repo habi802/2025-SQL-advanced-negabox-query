@@ -22,5 +22,12 @@
       <jdbc-url>jdbc:mysql://192.168.0.84:3307/db_odd_adv_1</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="db_odd_adv_1@112.222.157.157" uuid="8e03c019-df28-403e-94e7-278e565544de">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://112.222.157.157:5061/db_odd_adv_1</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

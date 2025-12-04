@@ -215,7 +215,24 @@ BEGIN
             FROM discount_policy
             WHERE partner_id = input_payment_code;
 
-            -- 1.1.1.2. 결제 수단(카드) 테이블에 INSERT
+            -- 1.1.1.2. 할인 정책이 있을 경우
+            if value_policy_id IS NOT NULL THEN
+                -- 1.1.1.2.1. 결제할 금액이 할인 적용 가능 최소 금액 이하인지 확인
+                if value_price - value_discount_total <= value_policy_min_price THEN
+                    -- 1.1.1.2.2. 할인 적용된 금액이 최대 할인 금액이 넘지 않게 할인 금액 또는 할인율 적용
+                    if value_policy_discount_amount IS NOT NULL THEN
+                        SET value_discount_total = value_discount_total + value_policy_discount_amount;
+                    elseif value_policy_discount_percent IS NOT NULL THEN
+                        if (value_price - value_discount_total) * (value_policy_discount_percent / 100) <= value_policy_max_benefit_amount THEN
+                            SET value_discount_total = value_discount_total + ((value_price - value_discount_total) * (value_policy_discount_percent / 100));
+                        else
+                            SET value_discount_total = value_discount_total + value_policy_max_benefit_amount;
+                        END if;
+                    END if;
+                END if;
+            END if;
+
+            -- 1.1.1.3. 결제 수단(카드) 테이블에 INSERT
             INSERT INTO payment_card
             SET payment_id = value_payment_id,
                 card_company_code = input_payment_code,

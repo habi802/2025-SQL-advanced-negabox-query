@@ -11,7 +11,12 @@ CREATE PROCEDURE update_payment(
 )
 BEGIN
     DECLARE value_index INT DEFAULT 0;
+    DECLARE value_ticket_discount_count INT;
     DECLARE value_reservation_seat_count INT;
+    DECLARE value_adult_count INT;
+    DECLARE value_teen_count INT;
+    DECLARE value_elder_count INT;
+    DECLARE value_reservation_count_price DECIMAL(10, 2);
     DECLARE value_reservation_seat_id BIGINT;
     DECLARE value_user_id BIGINT;
     DECLARE value_non_user_id BIGINT;
@@ -73,6 +78,32 @@ BEGIN
             FROM reservation_seat_list
             WHERE reservation_id = input_type_id;
 
+            SELECT SUM(count) INTO value_adult_count
+            FROM reservation_count
+            WHERE reservation_id = input_type_id
+              AND age_type = '00201';
+
+            SELECT SUM(count) INTO value_teen_count
+            FROM reservation_count
+            WHERE reservation_id = input_type_id
+              AND age_type = '00202';
+
+            SELECT SUM(count) INTO value_elder_count
+            FROM reservation_count
+            WHERE reservation_id = input_type_id
+              AND age_type = '00203';
+
+            SET value_ticket_discount_count = JSON_LENGTH(input_ticket_discount);
+
+            if value_ticket_discount_count = value_adult_count + value_teen_count + value_elder_count THEN
+                SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '입력한 좌석 단위 할인 수와 예매 인원 수가 맞지 않습니다.';
+            END if;
+
+            if value_ticket_discount_count = 1
+               AND JSON_EXTRACT(input_ticket_discount, '$[0].benefit_code') = '01101' THEN
+
+            END if;
+
             WHILE value_index < value_reservation_seat_count DO
                 SELECT reservation_seat_id INTO value_reservation_seat_id
                 FROM reservation_seat_list
@@ -80,8 +111,29 @@ BEGIN
                 ORDER BY reservation_seat_id
                 LIMIT 1 OFFSET value_index;
 
+                if value_adult_count > 0 THEN
+                    SELECT price INTO value_reservation_count_price
+                    FROM reservation_count
+                    WHERE reservation_id = input_type_id
+                      AND age_type = '00201';
+                    SET value_adult_count = value_adult_count - 1;
+                elseif value_teen_count > 0 THEN
+                    SELECT price INTO value_reservation_count_price
+                    FROM reservation_count
+                    WHERE reservation_id = input_type_id
+                      AND age_type = '00202';
+                    SET value_teen_count = value_teen_count - 1;
+                elseif value_elder_count > 0 THEN
+                    SELECT price INTO value_reservation_count_price
+                    FROM reservation_count
+                    WHERE reservation_id = input_type_id
+                      AND age_type = '00203';
+                    SET value_elder_count = value_elder_count - 1;
+                END if;
+
                 INSERT INTO ticket_discount
-                SET reservation_seat_id = value_reservation_seat_id;
+                SET reservation_seat_id = value_reservation_seat_id,
+                    applied_amount = value_reservation_count_price;
 
                 SET value_index = value_index + 1;
             END WHILE;

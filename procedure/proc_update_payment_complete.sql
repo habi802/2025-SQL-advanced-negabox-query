@@ -307,8 +307,8 @@ BEGIN
         END if;
     END if;
 
-    -- COMMIT;
-    ROLLBACK;
+    COMMIT;
+    -- ROLLBACK;
 END$$
 
 DELIMITER ;

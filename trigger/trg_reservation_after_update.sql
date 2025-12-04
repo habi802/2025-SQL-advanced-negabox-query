@@ -6,8 +6,21 @@ CREATE TRIGGER trg_reservation_after_update
     AFTER UPDATE ON reservation
     FOR EACH ROW
 BEGIN
-    -- 예매 상태가 '취소' 로 변경되었을 경우
-    if OLD.status <> 2 AND NEW.status = 2 THEN
+    if OLD.status <> 1 AND NEW.status = 1 THEN
+        -- 예매 상태가 '완료' 로 변경되었을 경우
+        -- 결제 상태를 '완료' 로 변경하는 프로시저 실행
+        CALL update_payment_complete(
+             0,
+             OLD.reservation_id,
+             0,
+             ELT(FLOOR(1 + RAND() * 12),
+                '00501', '00502', '00503', '00504', '00505', '00506',
+                '00507', '00508', '00509', '00510', '00511', '00512'
+             ),
+             NULL
+        );
+    elseif OLD.status <> 2 AND NEW.status = 2 THEN
+        -- 예매 상태가 '취소' 로 변경되었을 경우
         -- 결제 데이터 상태도 '취소' 로 변경
         UPDATE payment
         SET status = 2
@@ -16,10 +29,6 @@ BEGIN
         -- 예매별 예매 좌석 데이터 삭제
         DELETE FROM reservation_seat_list
         WHERE reservation_id = OLD.reservation_id;
-    -- 예매 상태가 '완료' 로 변경되었을 경우
-    elseif OLD.status <> 1 AND NEW.status = 1 THEN
-        -- 결제 데이터 상태도 '완료' 로 변경
-
     END if;
 END$$
 

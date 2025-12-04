@@ -167,6 +167,7 @@ BEGIN
         amount = value_total_price;
 
     COMMIT;
+    -- ROLLBACK;
 END$$
 
 DELIMITER ;

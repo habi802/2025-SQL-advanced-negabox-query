@@ -49,3 +49,10 @@ FROM screen_schedule ss
 JOIN seat se
   ON se.screen_id = ss.screen_id
 WHERE ss.schedule_id = 2634128;
+
+UPDATE review r
+SET r.like_count = (
+    SELECT COUNT(1)
+    FROM review_like rl
+    WHERE rl.review_id = r.review_id
+);

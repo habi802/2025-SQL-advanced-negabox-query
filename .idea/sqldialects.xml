@@ -7,6 +7,7 @@
     <file url="file://$PROJECT_DIR$/procedure/proc_insert_reservation.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/procedure/proc_update_payment_complete.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/queries/Query.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/queries/select_screen_schedule.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/scheduler/evt_cancel_payment(안씀).sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/scheduler/evt_cancel_reservation_and_order.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/trigger/trg_order_after_update.sql" dialect="MySQL" />

@@ -6,6 +6,7 @@
     <file url="file://$PROJECT_DIR$/procedure/proc_insert_reservation.sql" value="8e03c019-df28-403e-94e7-278e565544de" />
     <file url="file://$PROJECT_DIR$/procedure/proc_update_payment_complete.sql" value="8e03c019-df28-403e-94e7-278e565544de" />
     <file url="file://$PROJECT_DIR$/queries/Query.sql" value="8e03c019-df28-403e-94e7-278e565544de" />
+    <file url="file://$PROJECT_DIR$/queries/select_reservation_log.sql" value="8e03c019-df28-403e-94e7-278e565544de" />
     <file url="file://$PROJECT_DIR$/queries/select_screen_schedule.sql" value="8e03c019-df28-403e-94e7-278e565544de" />
     <file url="file://$PROJECT_DIR$/scheduler/evt_cancel_payment(안씀).sql" value="0fe66180-36bf-450f-8362-f9ef8fa9e100" />
     <file url="file://$PROJECT_DIR$/scheduler/evt_cancel_reservation_and_order.sql" value="8e03c019-df28-403e-94e7-278e565544de" />

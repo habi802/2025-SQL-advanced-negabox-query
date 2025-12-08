@@ -1,6 +1,6 @@
 -- 1. 지점을 선택하여(3개 정도) 상영 일정 조회하는 쿼리를 만듦
-EXPLAIN
--- EXPLAIN ANALYZE
+-- EXPLAIN
+EXPLAIN ANALYZE
 SELECT t.`name` AS 지점,
        s.`name` AS 상영관,
        IF(s_time_cc.`name` = '조조', '조조', '') AS 구분,
@@ -9,16 +9,11 @@ SELECT t.`name` AS 지점,
 	   ss.start_time AS 시작시간,
 	   ss.end_time AS 종료시간
 FROM screen_schedule ss
-JOIN screen s
-  ON s.screen_id = ss.screen_id
-JOIN theater t
-  ON t.theater_id = s.theater_id
-JOIN common_code s_type_cc
-  ON s_type_cc.code_id = ss.screen_type
-JOIN common_code s_time_cc
-  ON s_time_cc.code_id = ss.screen_time
-JOIN movie m
-  ON m.movie_id = ss.movie_id
+JOIN screen s ON s.screen_id = ss.screen_id
+JOIN theater t ON t.theater_id = s.theater_id
+JOIN common_code s_type_cc ON s_type_cc.code_id = ss.screen_type
+JOIN common_code s_time_cc ON s_time_cc.code_id = ss.screen_time
+JOIN movie m ON m.movie_id = ss.movie_id
 WHERE t.theater_id IN (1, 2, 3)
   AND (
           ss.running_date > CURDATE()
@@ -49,16 +44,11 @@ SELECT t.`name` AS 지점,
 	   ss.start_time AS 시작시간,
 	   ss.end_time AS 종료시간
 FROM screen_schedule ss FORCE INDEX (IDX_screen_schedule)
-JOIN screen s
-  ON s.screen_id = ss.screen_id
-JOIN theater t
-  ON t.theater_id = s.theater_id
-JOIN common_code s_type_cc
-  ON s_type_cc.code_id = ss.screen_type
-JOIN common_code s_time_cc
-  ON s_time_cc.code_id = ss.screen_time
-JOIN movie m
-  ON m.movie_id = ss.movie_id
+JOIN screen s ON s.screen_id = ss.screen_id
+JOIN theater t ON t.theater_id = s.theater_id
+JOIN common_code s_type_cc ON s_type_cc.code_id = ss.screen_type
+JOIN common_code s_time_cc ON s_time_cc.code_id = ss.screen_time
+JOIN movie m ON m.movie_id = ss.movie_id
 WHERE t.theater_id IN (1, 2, 3)
   AND (
           ss.running_date > CURDATE()

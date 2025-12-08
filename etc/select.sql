@@ -56,3 +56,4 @@ SET r.like_count = (
     FROM review_like rl
     WHERE rl.review_id = r.review_id
 );
+

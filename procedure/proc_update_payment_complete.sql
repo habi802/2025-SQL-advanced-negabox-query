@@ -330,7 +330,7 @@ END$$
 
 DELIMITER ;
 
--- 프로시저 호출 예시
+-- 프로시저 호출 예시(예매)
 CALL update_payment_complete(
      1,
      1,
@@ -339,6 +339,7 @@ CALL update_payment_complete(
      '[{"benefit_code": "01101", "benefit_id": 1}]'
 );
 
+-- 프로시저 호출 예시(스토어)
 CALL update_payment_complete(
      1,
      17827,

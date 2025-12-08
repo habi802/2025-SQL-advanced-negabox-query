@@ -17,7 +17,7 @@ BEGIN
     DECLARE value_reservation_person_count INT DEFAULT 0;
     DECLARE value_now_date_time DATETIME;
     DECLARE value_screen_running_date DATE;
-    DECLARE value_screen_start_time TIME;
+    DECLARE value_screen_start_time DATETIME;
     DECLARE value_age_type VARCHAR(7);
     DECLARE value_count INT;
     DECLARE value_price INT;

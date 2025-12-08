@@ -37,8 +37,6 @@ BEGIN
     DECLARE value_store_item_id BIGINT;
     DECLARE value_store_payment_type INT;
 
-    START TRANSACTION;
-
     -- 입력한 결제 수단과 결제 수단 관련 코드가 맞는지 확인
     -- 예매에 대해 결제하는 경우,
     -- 0(카드 결제)이면, '00501' ~ '00512' 중 하나
@@ -323,9 +321,6 @@ BEGIN
             WHERE type_id = input_type_id;
         END if;
     END if;
-
-    COMMIT;
-    -- ROLLBACK;
 END$$
 
 DELIMITER ;

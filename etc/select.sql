@@ -57,3 +57,4 @@ SET r.like_count = (
     WHERE rl.review_id = r.review_id
 );
 
+UPDATE reservation SET status = 1 WHERE reservation_id = 1887921;

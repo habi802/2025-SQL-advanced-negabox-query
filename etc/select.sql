@@ -57,4 +57,16 @@ SET r.like_count = (
     WHERE rl.review_id = r.review_id
 );
 
-UPDATE reservation SET status = 1 WHERE reservation_id = 1887921;
+SELECT * FROM payment WHERE type_id = 1887918;
+
+UPDATE store_item
+SET start_date = '2025-12-05',
+    is_active = 1
+WHERE store_item_id = 21;
+
+INSERT INTO `order`
+SET user_id = 163977,
+    store_item_id = 21,
+    quantity = 12,
+    unit_price = 18500.00,
+    price = 18500.00;
